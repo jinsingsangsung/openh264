@@ -544,7 +544,42 @@ void DumpRecFrame (SPicture* pCurPicture, const char* kpFileName, const int8_t k
   }
 }
 
-
+void DumpPredictionInputs(sWelsEncCtx* pEncCtx, SMB* pCurMb, 
+                         const int32_t kiMbX, const int32_t kiMbY,
+                         const char* filename) {
+    FILE* f = fopen(filename, "ab");
+    PredictionInputs inputs;
+    
+    // Get current block data
+    const int32_t kiStride = pEncCtx->pCurDqLayer->iEncStride[0];
+    uint8_t* pEncData = pEncCtx->pCurDqLayer->pEncData[0] + 
+                        (kiMbY * kiStride + kiMbX) * MB_WIDTH;
+    
+    // Copy current block
+    for (int i = 0; i < MB_WIDTH; i++) {
+        memcpy(inputs.currentBlock[i], 
+               pEncData + i * kiStride, 
+               MB_WIDTH);
+    }
+    
+    // Get reference block (left neighbor)
+    inputs.hasLeftRef = (kiMbX > 0);
+    if (inputs.hasLeftRef) {
+        uint8_t* pRefData = pEncData - MB_WIDTH;
+        for (int i = 0; i < MB_WIDTH; i++) {
+            memcpy(inputs.referenceBlock[i], 
+                   pRefData + i * kiStride, 
+                   MB_WIDTH);
+        }
+    }
+    
+    inputs.mbX = kiMbX;
+    inputs.mbY = kiMbY;
+    inputs.isIFrame = (pEncCtx->eSliceType == I_SLICE);
+    
+    fwrite(&inputs, sizeof(PredictionInputs), 1, f);
+    fclose(f);
+}
 
 /***********************************************************************************/
 void WelsSetMemZero_c (void* pDst, int32_t iSize) { // confirmed_safe_unsafe_usage

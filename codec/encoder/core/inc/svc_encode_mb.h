@@ -52,7 +52,7 @@ void WelsDctMb (int16_t* pRs, uint8_t* pEncMb, int32_t iEncStride, uint8_t* pBes
 
 void WelsEncRecI16x16Y (sWelsEncCtx* pEncCtx, SMB* pCurMb, SMbCache* pMbCache);
 void WelsEncRecI4x4Y (sWelsEncCtx* pEncCtx, SMB* pCurMb, SMbCache* pMbCache, uint8_t uiI4x4Idx);
-void WelsEncInterY (SWelsFuncPtrList* func, SMB* pCurMb, SMbCache* pMbCache);
+void WelsEncInterY (sWelsEncCtx* pEncCtx, SWelsFuncPtrList* pFuncList, SMB* pCurMb, SMbCache* pMbCache);
 void WelsEncRecUV (SWelsFuncPtrList* func, SMB* pCurMb, SMbCache* pMbCache, int16_t* pRs, int32_t iUV);
 void WelsRecPskip (SDqLayer* pCurDq, SWelsFuncPtrList* pFunc, SMB* pCurMb, SMbCache* pMbCache);
 
@@ -60,4 +60,5 @@ bool WelsTryPYskip (sWelsEncCtx* pEncCtx, SMB* pCurMb, SMbCache* pMbCache);
 bool WelsTryPUVskip (sWelsEncCtx* pEncCtx, SMB* pCurMb, SMbCache* pMbCache, int32_t iUV);
 }
 #endif
+
 

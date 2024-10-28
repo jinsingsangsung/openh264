@@ -460,7 +460,7 @@ void WelsInterMbEncode (sWelsEncCtx* pEncCtx, SSlice* pSlice, SMB* pCurMb) {
 
   WelsDctMb (pMbCache->pCoeffLevel,  pMbCache->SPicData.pEncMb[0], pEncCtx->pCurDqLayer->iEncStride[0],
              pMbCache->pMemPredLuma, pEncCtx->pFuncList->pfDctFourT4);
-  WelsEncInterY (pEncCtx->pFuncList, pCurMb, pMbCache);
+  WelsEncInterY (pEncCtx, pEncCtx->pFuncList, pCurMb, pMbCache);
 }
 
 

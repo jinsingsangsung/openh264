@@ -48,6 +48,14 @@ namespace WelsEnc {
  * \param   pEncCtx     sWelsEncCtx*
  * \return  successful - 0; otherwise none 0 for failed
  */
+
+// Add MB_WIDTH definition if not already defined
+#define MB_WIDTH 16  // Standard H.264 macroblock size is 16x16
+
+void DumpPredictionInputs(sWelsEncCtx* pEncCtx, SMB* pCurMb, 
+                         const int32_t kiMbX, const int32_t kiMbY,
+                         const char* filename);
+
 int32_t RequestMemorySvc (sWelsEncCtx** ppCtx, SExistingParasetList* pExistingParasetList);
 
 /*!
@@ -144,5 +152,18 @@ void WelsSetMemZero_AArch64_neon (void* pDst, int32_t iSize);
  * Function points type
 ***********************************************************************************/
 }
+
+/**********************************************************************************
+ * Construct prediction inputs
+***********************************************************************************/
+
+// Define prediction inputs structure
+struct PredictionInputs {
+    uint8_t currentBlock[MB_WIDTH][MB_WIDTH];   // Current block to be encoded
+    uint8_t referenceBlock[MB_WIDTH][MB_WIDTH]; // Reference block (left neighbor)
+    bool hasLeftRef;                            // Whether left reference exists
+    int32_t mbX, mbY;                          // MB position
+    bool isIFrame;                             // Frame type
+};
 
 #endif//WELS_CORE_ENCODER_H__

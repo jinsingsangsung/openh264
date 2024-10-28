@@ -37,7 +37,7 @@
  *************************************************************************************
  */
 
-
+#include "encoder.h"
 #include "svc_encode_mb.h"
 #include "encode_mb_aux.h"
 #include "decode_mb_aux.h"
@@ -52,6 +52,11 @@ void WelsDctMb (int16_t* pRes, uint8_t* pEncMb, int32_t iEncStride, uint8_t* pBe
 }
 
 void WelsEncRecI16x16Y (sWelsEncCtx* pEncCtx, SMB* pCurMb, SMbCache* pMbCache) {
+  // Add dump before prediction
+  DumpPredictionInputs(pEncCtx, pCurMb, 
+                      pCurMb->iMbX, pCurMb->iMbY, 
+                      "pred_inputs_i16.bin");
+
   ENFORCE_STACK_ALIGN_1D (int16_t, aDctT4Dc, 16, 16)
   SWelsFuncPtrList* pFuncList   = pEncCtx->pFuncList;
   SDqLayer* pCurDqLayer         = pEncCtx->pCurDqLayer;
@@ -137,6 +142,11 @@ void WelsEncRecI16x16Y (sWelsEncCtx* pEncCtx, SMB* pCurMb, SMbCache* pMbCache) {
   }
 }
 void WelsEncRecI4x4Y (sWelsEncCtx* pEncCtx, SMB* pCurMb, SMbCache* pMbCache, uint8_t uiI4x4Idx) {
+  // Add dump before prediction  
+  DumpPredictionInputs(pEncCtx, pCurMb, 
+                      pCurMb->iMbX, pCurMb->iMbY, 
+                      "pred_inputs_i4.bin");
+
   SWelsFuncPtrList* pFuncList   = pEncCtx->pFuncList;
   SDqLayer* pCurDqLayer         = pEncCtx->pCurDqLayer;
   int32_t iEncStride            = pCurDqLayer->iEncStride[0];
@@ -177,7 +187,12 @@ void WelsEncRecI4x4Y (sWelsEncCtx* pEncCtx, SMB* pCurMb, SMbCache* pMbCache, uin
     pFuncList->pfCopy4x4 (pPredI4x4, iRecStride, pBestPred, 4);
 }
 
-void WelsEncInterY (SWelsFuncPtrList* pFuncList, SMB* pCurMb, SMbCache* pMbCache) {
+void WelsEncInterY (sWelsEncCtx* pEncCtx, SWelsFuncPtrList* pFuncList, SMB* pCurMb, SMbCache* pMbCache) {
+  // Add dump before prediction
+  DumpPredictionInputs(pEncCtx, pCurMb, 
+                      pCurMb->iMbX, pCurMb->iMbY, 
+                      "pred_inputs_p.bin");
+
   PQuantizationMaxFunc pfQuantizationFour4x4Max         = pFuncList->pfQuantizationFour4x4Max;
   PSetMemoryZero pfSetMemZeroSize8                      = pFuncList->pfSetMemZeroSize8;
   PSetMemoryZero pfSetMemZeroSize64                     = pFuncList->pfSetMemZeroSize64;
@@ -381,3 +396,4 @@ bool    WelsTryPUVskip (sWelsEncCtx* pEncCtx, SMB* pCurMb, SMbCache* pMbCache, i
 }
 
 } // namespace WelsEnc
+
